@@ -3,6 +3,7 @@
   "description": "Remove the AppMenu, replace the activities label with 3 dots and animate them as a loading spinner.",
   "uuid": "replace-activities-label@leleat-on-github",
   "settings-schema": "org.gnome.shell.extensions.replace-activities-label",
+  "url": "https://github.com/Leleat/replace-activities-label",
   "shell-version": [
     "43"
   ]
