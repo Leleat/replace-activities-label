@@ -1,7 +1,7 @@
 'use strict';
 
-const { Clutter, GObject, Graphene, Shell, St } = imports.gi;
-const { main: Main } = imports.ui;
+const { Clutter, Gio, GLib, GObject, Graphene, Shell, St } = imports.gi;
+const { animation: Animation, main: Main } = imports.ui;
 
 var LoadingSpinner = GObject.registerClass(
 class LoadingSpinnerRAL extends Clutter.Actor {
@@ -14,7 +14,12 @@ class LoadingSpinnerRAL extends Clutter.Actor {
         this._activityButton = Main.panel.statusArea['activities'];
         this._activityLabel = this._activityButton.get_children()[0];
 
-        this._spinner = new Spinner();
+        const ExtensionUtils = imports.misc.extensionUtils;
+        const Me = ExtensionUtils.getCurrentExtension();
+        const settings = ExtensionUtils.getSettings(Me.metadata['settings-schema']);
+        const animtionSVG = settings.get_string('animation-file');
+
+        this._spinner = animtionSVG ? new Spinner2(animtionSVG) : new Spinner();
 
         this._activityButton.remove_child(this._activityLabel);
         this._activityButton.add_child(this._spinner);
@@ -254,5 +259,52 @@ class SpinnerRAL extends St.BoxLayout {
             scale_y: 1,
             mode: Clutter.AnimationMode.EASE_OUT_QUAD
         });
+    }
+});
+
+const Spinner2 = GObject.registerClass(
+class Spinner2RAL extends Animation.AnimatedIcon {
+    _init(filePath) {
+        const file = Gio.File.new_for_uri(`file://${filePath}`);
+        super._init(file, 16);
+
+        // Show after frames were loaded
+        const id = this._animations.connect('actor-added', () => {
+            this._animations.disconnect(id);
+            this._showFrame(0);
+        });
+    }
+
+    _onDestroy() {
+        super.stop();
+    }
+
+    play(loop = true) {
+        if (this._isLoaded && this._timeoutId == 0) {
+            if (this._frame == 0)
+                this._showFrame(0);
+
+            this._timeoutId = GLib.timeout_add(GLib.PRIORITY_LOW, this._speed, this._update.bind(this, loop));
+            GLib.Source.set_name_by_id(this._timeoutId, '[gnome-shell] this._update');
+        }
+
+        this._isPlaying = true;
+    }
+
+    stop() {
+        super.stop();
+
+        // Finish last animation cycle
+        this.play(false);
+    }
+
+    _update(loop) {
+        const atLastFrame = (this._frame + 1) % this._animations.get_n_children() === 0;
+        if (!loop && atLastFrame)
+            super.stop();
+        else
+            this._showFrame(this._frame + 1);
+
+        return GLib.SOURCE_CONTINUE;
     }
 });

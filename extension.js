@@ -32,8 +32,13 @@ class Extension {
     }
 
     enable() {
-        this._loadingSpinner = new LoadingSpinner();;
         this._settings = ExtensionUtils.getSettings(Me.metadata['settings-schema']);
+
+        this._settings.connect('changed::animation-file', () => {
+            this._loadingSpinner.destroy();
+            this._loadingSpinner = new LoadingSpinner();
+        });
+        this._loadingSpinner = new LoadingSpinner();
 
         this._settings.connect('changed::hide-app-menu', () => this._setAppMenu());
         this._setAppMenu();

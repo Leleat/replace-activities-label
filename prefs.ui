@@ -16,6 +16,32 @@
               </child>
             </object>
           </child>
+          <child>
+            <object class="AdwActionRow">
+              <property name="title" translatable="yes">Animation File</property>
+              <property name="activatable-widget">anim_chooser_button</property>
+              <child>
+                <object class="GtkButton" id="anim_chooser_button">
+                  <property name="tooltip-text" translatable="yes">Choose a file to load a custom loading animation</property>
+                  <property name="valign">center</property>
+                  <property name="icon_name">document-open-symbolic</property>
+                  <style>
+                    <class name="flat"/>
+                  </style>
+                </object>
+              </child>
+              <child>
+                <object class="GtkButton" id="anim_clear_button">
+                  <property name="tooltip-text" translatable="yes">Remove the custom loading animation and use the default one</property>
+                  <property name="valign">center</property>
+                  <property name="icon_name">edit-undo-symbolic</property>
+                  <style>
+                    <class name="flat"/>
+                  </style>
+                </object>
+              </child>
+            </object>
+          </child>
         </object>
       </child>
   </object>
