@@ -276,7 +276,12 @@ class Spinner2RAL extends Animation.AnimatedIcon {
     }
 
     _onDestroy() {
-        super.stop();
+        if (this._timeoutId > 0) {
+            GLib.source_remove(this._timeoutId);
+            this._timeoutId = 0;
+        }
+
+        this._isPlaying = false;
     }
 
     play(loop = true) {
