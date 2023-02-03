@@ -19,6 +19,7 @@
           <child>
             <object class="AdwActionRow">
               <property name="title" translatable="yes">Animation File</property>
+              <property name="subtitle" translatable="yes">This is intended for testing purposes! If an invalid file is chosen, this may break your GNOME Shell. To recover you'd need to log into a TTY, delete the extension files, and reload GNOME Shell. This setting should be a path to a svg/png file with the dimensions of a multiple of 16 px.</property>
               <property name="activatable-widget">anim_chooser_button</property>
               <child>
                 <object class="GtkButton" id="anim_chooser_button">

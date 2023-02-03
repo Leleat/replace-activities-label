@@ -14,12 +14,17 @@ class LoadingSpinnerRAL extends Clutter.Actor {
         this._activityButton = Main.panel.statusArea['activities'];
         this._activityLabel = this._activityButton.get_children()[0];
 
-        const ExtensionUtils = imports.misc.extensionUtils;
-        const Me = ExtensionUtils.getCurrentExtension();
-        const settings = ExtensionUtils.getSettings(Me.metadata['settings-schema']);
-        const animtionSVG = settings.get_string('animation-file');
+        this._spinner = null;
 
-        this._spinner = animtionSVG ? new Spinner2(animtionSVG) : new Spinner();
+        try {
+            const ExtensionUtils = imports.misc.extensionUtils;
+            const Me = ExtensionUtils.getCurrentExtension();
+            const settings = ExtensionUtils.getSettings(Me.metadata['settings-schema']);
+            const animtionSVG = settings.get_string('animation-file');
+            this._spinner = animtionSVG ? new Spinner2(animtionSVG) : new Spinner();
+        } catch (error) {
+            this._spinner = new Spinner();
+        }
 
         this._activityButton.remove_child(this._activityLabel);
         this._activityButton.add_child(this._spinner);
@@ -266,6 +271,10 @@ const Spinner2 = GObject.registerClass(
 class Spinner2RAL extends Animation.AnimatedIcon {
     _init(filePath) {
         const file = Gio.File.new_for_uri(`file://${filePath}`);
+
+        if (!filePath.endsWith('.svg') && !filePath.endsWith('.png') || !file.query_exists(null))
+            throw new Error('Replace Activities Label: Only svg file allowed for animation...');
+
         super._init(file, 16);
 
         // Show after frames were loaded
