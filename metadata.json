@@ -5,6 +5,7 @@
   "settings-schema": "org.gnome.shell.extensions.replace-activities-label",
   "url": "https://github.com/Leleat/replace-activities-label",
   "shell-version": [
-    "43"
+    "43",
+    "44"
   ]
 }
